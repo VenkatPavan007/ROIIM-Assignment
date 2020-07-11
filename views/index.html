@@ -1,0 +1,51 @@
+<html>
+
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js"></script>
+		<script src="https://hosted.paysafe.com/checkout/v1/latest/paysafe.checkout.min.js"></script>
+	</head>
+
+	<body>
+		<button onclick="checkout()">Create Token</button>
+		...
+		<script>
+			function checkout() {
+			     paysafe.checkout.setup("T1QtNDkxNjAwOkItcWEyLTAtNWYwN2VkZWQtMC0zMDJkMDIxNDU5YzA3MjdlYjM2NzliMWNlMTY3MjQ3MmQxZmNkZTgyMDhiMTQ3OTEwMjE1MDA4MzhkYjc0MmVhMzg4MDFkZjgxN2JjY2M0YzNlODgyZTZhNWQ1YjJm", {
+				     amount: 5000,
+				     currency: "USD",
+				     environment: "TEST",
+				     companyName: "ROIIM Assignment"
+			     }, function(instance, error, result) {
+					
+				     if (result.token) {       					   	   
+						console.log("Hey" + result.paymentHandletoken);
+			             if (result.paymentMethod=="Cards") {
+							$.ajax({
+								type: "POST",
+								url: "/data",
+								contentType: "application/json",
+								data: JSON.stringify({token: result.token},),
+								success: (data) =>{		
+														
+									let parsedData = JSON.parse(data);								
+									
+									if(!parsedData.isError){
+										instance.showSuccessScreen("Payment Successful!");
+									}
+									else{
+										instance.showFailureScreen("Payment was declined. Try again with the same or another payment method.");	
+									}
+								}
+							});						 
+					         
+			             }
+					     	                     
+				     } else {					   
+							instance.showFailureScreen("Payment was declined. Try again with the same or another payment method.");							
+						}        
+			     });
+			}
+		</script>
+	</body>
+
+</html>
